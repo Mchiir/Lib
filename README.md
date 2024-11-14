@@ -10,7 +10,7 @@ Access the API documentation with an easy-to-navigate Swagger UI. Secure access 
 ---
 
 <h3 align="left">🛠 Languages and Tools Used</h3>
-<p align="left"> 
+<p align="left" style="font-size: 1.2em;"> 
     <a href="https://spring.io/" target="_blank" rel="noreferrer">
         <img src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="Spring" width="40" height="40"/>
     </a> Spring Framework <br />

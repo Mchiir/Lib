@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1213,
+    "contact": "mchrispin4@gmail.com",
+    "firstUsername": "mugisha",
+    "lastUsername": "chrispin",
+    "password": "mugisha1234"
+  },
+  {
+    "id": 1214,
+    "contact": "john.doe@example.com",
+    "firstUsername": "john",
+    "lastUsername": "doe",
+    "password": "john1234"
+  },
+  {
+    "id": 1215,
+    "contact": "jane.smith@example.com",
+    "firstUsername": "jane",
+    "lastUsername": "smith",
+    "password": "jane5678"
+  },
+  {
+    "id": 1216,
+    "contact": "alex.jones@example.com",
+    "firstUsername": "alex",
+    "lastUsername": "jones",
+    "password": "alex91011"
+  },
+  {
+    "id": 1217,
+    "contact": "mary.johnson@example.com",
+    "firstUsername": "mary",
+    "lastUsername": "johnson",
+    "password": "mary1213"
+  },
+  {
+    "id": 1218,
+    "contact": "peter.parker@example.com",
+    "firstUsername": "peter",
+    "lastUsername": "parker",
+    "password": "spiderman123"
+  },
+  {
+    "id": 1219,
+    "contact": "clark.kent@example.com",
+    "firstUsername": "clark",
+    "lastUsername": "kent",
+    "password": "superman456"
+  },
+  {
+    "id": 1220,
+    "contact": "bruce.wayne@example.com",
+    "firstUsername": "bruce",
+    "lastUsername": "wayne",
+    "password": "batman789"
+  },
+  {
+    "id": 1221,
+    "contact": "diana.prince@example.com",
+    "firstUsername": "diana",
+    "lastUsername": "prince",
+    "password": "wonderwoman101"
+  },
+  {
+    "id": 1222,
+    "contact": "tony.stark@example.com",
+    "firstUsername": "tony",
+    "lastUsername": "stark",
+    "password": "ironman202"
+  },
+  {
+    "id": 1223,
+    "contact": "harry.potter@example.com",
+    "firstUsername": "harry",
+    "lastUsername": "potter",
+    "password": "wizard345"
+  }
+]

@@ -11,6 +11,6 @@ public class LibraryManagementApplication {
     }
 }
 
-//swagger-ui doc http://localhost:8080/swagger-ui/index.html
+// swagger-ui doc http://localhost:8080/swagger-ui/index.html
 // cridentials are in config.SecurityConfig
 // json swagger: http://localhost:8080/v3/api-docs

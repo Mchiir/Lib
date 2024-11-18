@@ -59,6 +59,10 @@ public class UserService {
         if (user.getId() != null && userRepository.existsById(user.getId())) {
             throw new IllegalArgumentException("User ID is invalid or already exists.");
         }
+        if (user.getId() != null && userRepository.existsByContact(user.getContact())) {
+            throw new IllegalArgumentException("User Contact is invalid or already exists.");
+        }
+
 
         // Hash the password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));

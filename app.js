@@ -7,7 +7,6 @@ const { connectDB, disconnectDB } = require('./config/db'); // Import connect an
 
 const app = express()
 
-// Middleware
 app.use(express.json())
 
 // Serve Swagger UI

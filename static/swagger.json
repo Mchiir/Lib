@@ -1,12 +1,19 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "title": "Library Management API",
-      "description": "API documentation for Library Management System",
-      "version": "1.0.0"
-    },
-    "paths": {
-       "/": {
+  "swagger": "2.0",
+  "info": {
+    "title": "Library Management API",
+    "description": "API documentation for Library Management System",
+    "version": "1.0.0"
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "paths": {
+    "/": {
       "get": {
         "summary": "Welcome message",
         "description": "Returns a simple welcome message for the Library Management System API.",
@@ -20,7 +27,197 @@
           }
         }
       }
-     }
     },
-    "definitions": {}
-}  
+    "/auth/signup": {
+      "post": {
+        "summary": "Create a new user",
+        "description": "Creates a new user by signing up with a username and password.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "User data to register",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignupRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/SignupResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., validation errors)",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "description": "Logs in the user and returns a JWT token if credentials are correct.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "User credentials for login",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., invalid credentials)",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/book": {
+      "get": {
+        "summary": "Get list of books",
+        "description": "Returns a list of books, but requires authentication via Bearer token.",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of books",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "1"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "The Great Gatsby"
+                  },
+                  "author": {
+                    "type": "string",
+                    "example": "F. Scott Fitzgerald"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized (missing or invalid token)",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SignupRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "johndoe"
+        },
+        "password": {
+          "type": "string",
+          "example": "password123"
+        }
+      },
+      "required": ["username", "password"]
+    },
+    "SignupResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "User created successfully"
+        },
+        "username": {
+          "type": "string",
+          "example": "johndoe"
+        }
+      }
+    },
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "johndoe"
+        },
+        "password": {
+          "type": "string",
+          "example": "password123"
+        }
+      },
+      "required": ["username", "password"]
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Login successful"
+        },
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Invalid username or password"
+        },
+        "error": {
+          "type": "string",
+          "example": "Bad Request"
+        }
+      }
+    }
+  }
+}

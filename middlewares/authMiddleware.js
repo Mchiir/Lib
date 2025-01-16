@@ -1,23 +1,25 @@
-const { expressjwt: jwt } = require("express-jwt");
+const jwt = require('jsonwebtoken')
 
-// JWT authentication middleware
-function authenticateJWT(req, res, next) {
-    const secret = process.env.JWT_SECRET || 'your_secret_key';
+function verifyToken(req, res, next) {
+    const authHeader = req.header('Authorization') // Get the Authorization header
 
-    // // Get the token from Authorization header (it includes "Bearer " prefix)
-    // const token = req.headers['authorization'] && req.headers['authorization'].split(' ')[1]; // This will get the token after "Bearer"
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1] // Extract the token without 'Bearer '
+        console.log(token)
+        
+        if (!token) return res.status(401).json({ error: 'Access denied' }) // Check if token is present
 
-    // if (!token) {
-    //     return res.status(401).json({ message: 'Access denied. No token provided.' });
-    // }
-
-    console.log(req)
-
-    // Use express-jwt as middleware to verify the token from the Authorization header
-    jwt({
-        secret: secret,
-        algorithms: ['HS256'],  // the algorithm must match the one used in jwt.sign()
-    })(req, res, next);
+        try {
+            const secret = process.env.JWT_SECRET_KEY
+            const decoded = jwt.verify(token, secret)
+            req.userId = decoded.userId // Attach userId to request object
+            next() // Continue to the next middleware or route handler
+        } catch (error) {
+            return res.status(401).json({ message:error.message })
+        }
+    } else {
+        return res.status(401).json({ message: 'Authorization token missing or invalid' })
+    }
 }
 
-module.exports = authenticateJWT;
+module.exports = verifyToken

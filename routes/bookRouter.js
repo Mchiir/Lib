@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const bookController = require('../controllers/bookController');
-const authenticateJWT = require('../middlewares/authMiddleware');
+const verifyToken = require('../middlewares/authMiddleware');
 
 // Route for creating a new user
-router.get('/', authenticateJWT, bookController.index);
+router.get('/', verifyToken, bookController.index);
 
 module.exports = router;

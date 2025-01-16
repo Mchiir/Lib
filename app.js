@@ -19,6 +19,8 @@ app.get('/', (req, res)=>{
     res.send('Welcome to the Library Management System API')
 })
 
+
+
 // Gracefully shut down the server on SIGINT signal (ctrl+c)
 process.on('SIGINT', async () => {
     console.log('Received SIGINT. Closing MongoDB connection...\nServer stopped successfully.');

@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const userSchema = require('../validators/userValidator')
 
@@ -42,4 +43,43 @@ exports.createUser = async (req, res) =>{
     }
 }
 
-exports.login = async (req, res) => {}
+exports.login = async (req, res) => {
+    
+    try {
+    const { error, value } = userSchema.validate(req.body)
+
+    if (error) {
+        return res.status(400).json({ error: error.details[0].message });
+    }
+    
+    const { username, password } =  value
+
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid username or password' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid username or password' });
+    }
+
+    // Create JWT token
+    const token = jwt.sign(
+      { userId: user._id, username: user.username },
+      process.env.JWT_SECRET_KEY, // Secret key for signing
+      { expiresIn: process.env.JWT_EXPIRATION || '1h' } // Token expiration time (1 hour in this case)
+    );
+
+    // Send response with token
+    res.status(200).json({
+      message: 'Login successful',
+      token: token
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred', error: err.message });
+  }
+}

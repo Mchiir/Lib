@@ -1,0 +1,26 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Library Management API",
+      "description": "API documentation for Library Management System",
+      "version": "1.0.0"
+    },
+    "paths": {
+       "/": {
+      "get": {
+        "summary": "Welcome message",
+        "description": "Returns a simple welcome message for the Library Management System API.",
+        "responses": {
+          "200": {
+            "description": "Welcome message",
+            "schema": {
+              "type": "string",
+              "example": "Welcome to the Library Management System API"
+            }
+          }
+        }
+      }
+     }
+    },
+    "definitions": {}
+}  

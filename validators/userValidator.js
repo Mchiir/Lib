@@ -2,15 +2,32 @@ const Joi = require('joi')
 
 const userSchema = Joi.object({
   username: Joi.string()
-    .alphanum()
     .min(3)
     .max(30)
     .required(),
 
+  full_name: Joi.string()
+  .min(3)
+  .max(100)
+  .required(),
+
+email: Joi.string()
+  .email()
+  .required(),
+
   password: Joi.string()
     .min(8)
     .max(128)
-    .required()
+    .required(),
+
+  role: Joi.string()
+    .valid('admin', 'user', 'moderator')
+    .default('user')
+    .required(),
+
+  user_profile_image: Joi.string()
+    .uri()  // Validate if the user profile image is a valid URL
+    .optional()
 })
 
 module.exports = userSchema

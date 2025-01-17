@@ -8,8 +8,8 @@ const transactionSchema = new mongoose.Schema({
   book_name: { type: String, required: true },
   borrowing_date: { type: Date },
   return_date: { type: Date },
-  status: { 
-    type: String, 
+  status: {
+    type: String,
     enum: ['borrowed', 'returned'], 
     required: true 
   }

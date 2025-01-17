@@ -29,8 +29,8 @@ const userSignupSchema = new mongoose.Schema({
       },
       role: {
         type: String,
-        enum: ['admin', 'user', 'moderator'],  // Define possible roles for the user
-        default: 'user',  // Default role is 'user'
+        enum: ['STUDENT', 'LIBRARIAN', 'ADMIN', 'USER'],  // Define possible roles for the user
+        default: 'USER',  // Default role is 'user'
         required: true
       },
       user_profile_image: {

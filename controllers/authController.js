@@ -1,25 +1,46 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const User = require('../models/signupUser')
-const userSchema = require('../validators/signupUserValidator')
+const signupUser = require('../models/signupUser')
+const signupUserSchema = require('../validators/signupUserValidator')
+
+const loginUser = require('../models/loginUser')
+const loginUserSchema = require('../validators/loginUserValidator')
 
 exports.createUser = async (req, res) =>{
     try{
-        const { error, value } = userSchema.validate(req.body)
+        const { error, value } = signupUserSchema.validate(req.body)
         
         if (error) {
             return res.status(400).json({ error: error.details[0].message });
         }
         
-        const { username, password } =  value
+        const { username, full_name, password, email, role, user_profile_image } =  value
+
+        // Check if a user with the provided username or email already exists
+        const existingUser = await signupUser.findOne({
+            $or: [{ username }, { email }] // Check if either username or email already exists
+        });
+
+        if (existingUser) {
+            if (existingUser.username === username) {
+                return res.status(400).json({ error: 'Username already exists' });
+            }
+            if (existingUser.email === email) {
+                return res.status(400).json({ error: 'Email already exists' });
+            }
+        }
 
         // Hash the password before saving it
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
 
-        const newUser = new User({
+        const newUser = new signupUser({
         username,
-        password: hashedPassword
+        full_name,
+        password: hashedPassword,
+        email,
+        role,
+        user_profile_image
         })
 
         const savedUser = await newUser.save()
@@ -46,7 +67,7 @@ exports.createUser = async (req, res) =>{
 exports.login = async (req, res) => {
     
     try {
-    const { error, value } = userSchema.validate(req.body)
+    const { error, value } = loginUserSchema.validate(req.body)
 
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
@@ -54,7 +75,7 @@ exports.login = async (req, res) => {
     
     const { username, password } =  value
 
-    const user = await User.findOne({ username });
+    const user = await signupUser.findOne({ username });
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid username or password' });
@@ -73,6 +94,12 @@ exports.login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRATION || '1h' } // Token expiration time (1 hour in this case)
     );
 
+    const newLoggedInUser = new loginUser({
+      username,
+      password
+    })
+
+    await newLoggedInUser.save()
     // Send response with token
     res.status(200).json({
       message: 'Login successful',
@@ -81,5 +108,113 @@ exports.login = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'An error occurred', error: err.message });
+  }
+}
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { error, value } = signupUserSchema.validate(req.body);
+
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+
+    const userId = req.user._id;
+
+    // Check if user exists
+    const user = await signupUser.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // If password is provided, hash it before saving
+    if (value.password) {
+      const salt = await bcrypt.genSalt(10);
+      value.password = await bcrypt.hash(value.password, salt);
+    }
+
+    // Update the user with the new values
+    const updatedUser = await signupUser.findByIdAndUpdate(userId, value, { new: true });
+
+    res.status(200).json({
+      message: 'User updated successfully',
+      user: updatedUser.username
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error updating user', error: err.message });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await signupUser.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Delete the user
+    await signupUser.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      message: 'User deleted successfully'
+    })
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error deleting user', error: err.message });
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+      const { username } = req.params; // Assuming you're using username for fetching the user
+
+      // Find user by username in the database
+      const user = await signupUser.findOne({ username });
+      
+      // If user is not found
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Return the user details
+      res.status(200).json({
+          message: 'User found successfully',
+          user
+      });
+  } catch (err) {
+      // Error handling
+      console.error(err);
+      res.status(500).json({
+          message: 'An error occurred while fetching the user',
+          error: err.message
+      });
+  }
+}
+
+exports.getAllUsers = async (req, res) => {
+  try {
+      // Find all users in the database
+      const users = await signupUser.find();
+      
+      // If no users are found
+      if (users.length === 0) {
+          return res.status(404).json({ message: 'No users found' });
+      }
+
+      // Return the list of users
+      res.status(200).json({
+          message: 'Users retrieved successfully',
+          users
+      });
+  } catch (err) {
+      // Error handling
+      console.error(err);
+      res.status(500).json({
+          message: 'An error occurred while fetching users',
+          error: err.message
+      });
   }
 }

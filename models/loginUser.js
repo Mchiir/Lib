@@ -8,11 +8,11 @@ const userLoginSchema = new mongoose.Schema({
         maxlength: [30, 'Username cannot exceed 30 characters'], // max length validation
         unique: false,
       },
-      full_name: {
+      password: {
         type: String,
         required: true,
-        minlength: 3,
-        maxlength: 100
+        minlength: 8,
+        maxlength: 128
       }
 })
 

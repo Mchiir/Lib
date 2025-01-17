@@ -11,7 +11,7 @@ const transactionSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['borrowed', 'returned'], 
-    required: true 
+    required: true
   }
 });
 

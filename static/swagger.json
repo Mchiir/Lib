@@ -31,7 +31,7 @@
     "/auth/signup": {
       "post": {
         "summary": "Create a new user",
-        "description": "Creates a new user by signing up with a username and password.",
+        "description": "Creates a new user by signing up.",
         "parameters": [
           {
             "in": "body",
@@ -157,14 +157,30 @@
       "properties": {
         "username": {
           "type": "string",
-          "example": "johndoe"
+          "example": "@johndoe"
+        },
+        "full_name": {
+          "type": "string",
+          "example": "john doe"
         },
         "password": {
           "type": "string",
           "example": "password123"
+        },
+        "email": {
+          "type": "string",
+          "example": "johndoe@gmail.com"
+        },
+        "role": {
+          "type": "string",
+          "example": "USER"
+        },
+        "user_profile_image": {
+          "type": "string",
+          "example": "C:/image.png or https://example.com/profile.jpg, this also optional"
         }
       },
-      "required": ["username", "password"]
+      "required": ["username","full_name", "password", "email", "role" ]
     },
     "SignupResponse": {
       "type": "object",

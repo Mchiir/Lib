@@ -21,7 +21,7 @@ email: Joi.string()
     .required(),
 
   role: Joi.string()
-    .valid('admin', 'user', 'moderator')
+    .valid('STUDENT', 'LIBRARIAN', 'ADMIN', 'USER')
     .default('user')
     .required(),
 

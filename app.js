@@ -18,10 +18,13 @@ app.get('/', (req, res)=>{
     res.send('Welcome to the Library Management System API')
 })
 
-const authRoutes = require('./routes/authRouter')
+const authRoutes = require('./routers/authRouter')
+const studentRoutes = require('./routers/studentRouter')
+const bookRoutes = require('./routers/bookRouter')
+
 app.use('/auth', authRoutes)
-const bookRoutes = require('./routes/bookRouter')
 app.use('/book', bookRoutes)
+app.use('/student', studentRoutes)
 
 
 // Gracefully shut down the server on SIGINT signal (ctrl+c)

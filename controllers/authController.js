@@ -1,12 +1,12 @@
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const signupUser = require('../models/signupUser')
-const signupUserSchema = require('../validators/signupUserValidator').default
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import signupUser from '../models/signupUser.js'
+import signupUserSchema from '../validators/signupUserValidator.js'
 
-const loginUser = require('../models/loginUser')
-const loginUserSchema = require('../validators/loginUserValidator')
+import loginUser from '../models/loginUser.js'
+import loginUserSchema from '../validators/loginUserValidator.js'
 
-exports.createUser = async (req, res) => {
+export const createUser = async (req, res) => {
   try {
     const { error, value } = signupUserSchema.validate(req.body)
 
@@ -64,7 +64,7 @@ exports.createUser = async (req, res) => {
   }
 }
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
 
   try {
     const { error, value } = loginUserSchema.validate(req.body)
@@ -111,7 +111,7 @@ exports.login = async (req, res) => {
   }
 }
 
-exports.updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
   try {
     const { error, value } = signupUserSchema.validate(req.body);
 
@@ -146,7 +146,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     const userId = req.user._id;
 
@@ -167,7 +167,7 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-exports.getUser = async (req, res) => {
+export const getUser = async (req, res) => {
   try {
     const { username } = req.params; // Assuming you're using username for fetching the user
 
@@ -194,7 +194,7 @@ exports.getUser = async (req, res) => {
   }
 }
 
-exports.getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
     // Find all users in the database
     const users = await signupUser.find();
@@ -218,5 +218,3 @@ exports.getAllUsers = async (req, res) => {
     });
   }
 }
-
-// export { createUser }

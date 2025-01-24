@@ -1,4 +1,4 @@
-exports.index = async (req, res) => {
+export const index = async (req, res) => {
     try {
         // Simulating a list of books (usually you'd get this from a database)
         const books = [

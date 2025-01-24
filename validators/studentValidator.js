@@ -1,6 +1,6 @@
-const Joi = require('joi')
+import * as Joi from "joi"
 
-const studentSchema = Joi.object({
+const studentSchema = Joi.object().keys({
   stud_id: Joi.string()
     .alphanum()
     .min(3)
@@ -20,4 +20,4 @@ const studentSchema = Joi.object({
     .required()
 })
 
-module.exports = studentSchema
+export default studentSchema

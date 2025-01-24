@@ -4,9 +4,9 @@ import mongoose from 'mongoose'
 import { serve, setup } from 'swagger-ui-express'
 
 const require = createRequire(import.meta.url)
-const swaggerDocument = require('./static/swagger.json'); 
+const swaggerDocument = require('./static/swagger.json');
 // Swagger JSON documentation file
-import { connectDB, disconnectDB } from './config/db.js' // Import connect and disconnect
+import './config/db.js' // Import connect and disconnect
 
 
 config()
@@ -24,9 +24,9 @@ app.get('/', (req, res) => {
 })
 
 import authRoutes from './routers/authRouter.js'
-import studentRoutes from './routers/studentRouter.js'
+import { studentRoutes } from './routers/studentRouter.js'
 import bookRoutes from './routers/bookRouter.js'
-import { assert } from 'joi'
+import assert from 'joi'
 
 app.use('/auth', authRoutes)
 app.use('/book', bookRoutes)

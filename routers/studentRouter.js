@@ -1,4 +1,4 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
 
 const studentController = require('../controllers/studentController.js')
@@ -14,4 +14,4 @@ router.delete('/', studentController.deleteStudent)
 router.delete('/deleteAll', studentController.deleteAllStudents)
 router.delete('/deleteBatch', studentController.deleteBatchOfStudents) // requst should be a an array of students to delete
 
-module.exports = router
+export { router as studentRoutes }

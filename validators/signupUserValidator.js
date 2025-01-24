@@ -1,4 +1,5 @@
-import { object, string } from 'joi'
+import Joi from 'joi'
+const { object, string } = Joi
 
 const signupUserSchema = object({
   username: string()

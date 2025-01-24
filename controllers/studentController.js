@@ -1,11 +1,11 @@
 import Student, { findOne, insertMany, find, findOneAndUpdate, deleteOne, deleteMany } from '../models/Student'
-import { validate } from '../validators/studentValidator'
+import validator from '../validators/studentValidator'
 
 // Create a new student
 export async function createStudent(req, res) {
   try {
     // Validate the input data using Joi schema
-    const { error, value } = validate(req.body)
+    const { error, value } = validator.validate(req.body)
 
     if (error) {
       return res.status(400).json({ error: error.details[0].message })
@@ -50,7 +50,7 @@ export async function addStudents(req, res) {
     const invalidStudents = []
     const validStudents = []
     for (const student of req.body) {
-      const { error, value } = validate(student)
+      const { error, value } = validator.validate(student)
       if (error) {
         invalidStudents.push({ student, error: error.details[0].message })
       } else {
@@ -114,7 +114,7 @@ export async function getAllStudents(req, res) {
 export async function editStudent(req, res) {
   try {
     // Validate request body against the Joi schema
-    const { error, value } = validate(req.body);
+    const { error, value } = validator.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }

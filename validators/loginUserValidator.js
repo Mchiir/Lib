@@ -1,15 +1,15 @@
-const Joi = require('joi')
+import * as Joi from 'joi'
 
-const loginUserSchema = Joi.object({
+const loginUserSchema = Joi.object().keys({
   username: Joi.string()
     .min(3)
     .max(30)
     .required(),
 
-    password: Joi.string()
+  password: Joi.string()
     .min(8)
     .max(128)
     .required()
 })
 
-module.exports = loginUserSchema
+export default loginUserSchema

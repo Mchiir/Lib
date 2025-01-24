@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import { connect, disconnect } from 'mongoose'
 
 // Database connection URL (it will be pulled from .env file)
 const dbURI = process.env.MONGO_URI
@@ -19,7 +19,7 @@ const options = {
 const connectDB = async () => {
   try {
     // Try to connect to the database using mongoose
-    await mongoose.connect(dbURI)
+    await connect(dbURI)
     console.log('MongoDB connected...')
   } catch (err) {
     // Handle connection errors
@@ -33,11 +33,11 @@ const connectDB = async () => {
  */
 const disconnectDB = async () => {
   try {
-    await mongoose.disconnect()
+    await disconnect()
     console.log('MongoDB disconnected...')
   } catch (err) {
     console.error('Error disconnecting from MongoDB:', err)
   }
 }
 
-module.exports = { connectDB, disconnectDB }
+export default { connectDB, disconnectDB }

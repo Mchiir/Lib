@@ -1,79 +1,79 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const signupUser = require('../models/signupUser')
-const signupUserSchema = require('../validators/signupUserValidator')
+const signupUserSchema = require('../validators/signupUserValidator').default
 
 const loginUser = require('../models/loginUser')
 const loginUserSchema = require('../validators/loginUserValidator')
 
-exports.createUser = async (req, res) =>{
-    try{
-        const { error, value } = signupUserSchema.validate(req.body)
-        
-        if (error) {
-            return res.status(400).json({ error: error.details[0].message });
-        }
-        
-        const { username, full_name, password, email, role, user_profile_image } =  value
+exports.createUser = async (req, res) => {
+  try {
+    const { error, value } = signupUserSchema.validate(req.body)
 
-        // Check if a user with the provided username or email already exists
-        const existingUser = await signupUser.findOne({
-            $or: [{ username }, { email }] // Check if either username or email already exists
-        });
-
-        if (existingUser) {
-            if (existingUser.username === username) {
-                return res.status(400).json({ error: 'Username already exists' });
-            }
-            if (existingUser.email === email) {
-                return res.status(400).json({ error: 'Email already exists' });
-            }
-        }
-
-        // Hash the password before saving it
-        const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password, salt)
-
-        const newUser = new signupUser({
-        username,
-        full_name,
-        password: hashedPassword,
-        email,
-        role,
-        user_profile_image
-        })
-
-        const savedUser = await newUser.save()
-        res.status(201).json({
-            message: 'User created successfully',
-            username: savedUser.username
-        })
-    } catch (err) {
-        // Error handling: Check if it's a validation error from Mongoose
-        if (err.name === 'ValidationError') {
-          // Validation error (e.g., required fields, max/min length)
-          return res.status(400).json({ message: err.message })
-        }
-    
-        // Handle other errors (e.g., database issues, server errors)
-        console.error(err)
-        res.status(500).json({
-          message: 'An error occurred while creating the user',
-          error: err.message
-        })
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
     }
+
+    const { username, full_name, password, email, role, user_profile_image } = value
+
+    // Check if a user with the provided username or email already exists
+    const existingUser = await signupUser.findOne({
+      $or: [{ username }, { email }] // Check if either username or email already exists
+    });
+
+    if (existingUser) {
+      if (existingUser.username === username) {
+        return res.status(400).json({ error: 'Username already exists' });
+      }
+      if (existingUser.email === email) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+    }
+
+    // Hash the password before saving it
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
+
+    const newUser = new signupUser({
+      username,
+      full_name,
+      password: hashedPassword,
+      email,
+      role,
+      user_profile_image
+    })
+
+    const savedUser = await newUser.save()
+    res.status(201).json({
+      message: 'User created successfully',
+      username: savedUser.username
+    })
+  } catch (err) {
+    // Error handling: Check if it's a validation error from Mongoose
+    if (err.name === 'ValidationError') {
+      // Validation error (e.g., required fields, max/min length)
+      return res.status(400).json({ message: err.message })
+    }
+
+    // Handle other errors (e.g., database issues, server errors)
+    console.error(err)
+    res.status(500).json({
+      message: 'An error occurred while creating the user',
+      error: err.message
+    })
+  }
 }
 
 exports.login = async (req, res) => {
-    
-    try {
+
+  try {
     const { error, value } = loginUserSchema.validate(req.body)
 
     if (error) {
-        return res.status(400).json({ error: error.details[0].message });
+      return res.status(400).json({ error: error.details[0].message });
     }
-    
-    const { username, password } =  value
+
+    const { username, password } = value
 
     const user = await signupUser.findOne({ username });
 
@@ -169,52 +169,54 @@ exports.deleteUser = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-      const { username } = req.params; // Assuming you're using username for fetching the user
+    const { username } = req.params; // Assuming you're using username for fetching the user
 
-      // Find user by username in the database
-      const user = await signupUser.findOne({ username });
-      
-      // If user is not found
-      if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-      }
+    // Find user by username in the database
+    const user = await signupUser.findOne({ username });
 
-      // Return the user details
-      res.status(200).json({
-          message: 'User found successfully',
-          user
-      });
+    // If user is not found
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return the user details
+    res.status(200).json({
+      message: 'User found successfully',
+      user
+    });
   } catch (err) {
-      // Error handling
-      console.error(err);
-      res.status(500).json({
-          message: 'An error occurred while fetching the user',
-          error: err.message
-      });
+    // Error handling
+    console.error(err);
+    res.status(500).json({
+      message: 'An error occurred while fetching the user',
+      error: err.message
+    });
   }
 }
 
 exports.getAllUsers = async (req, res) => {
   try {
-      // Find all users in the database
-      const users = await signupUser.find();
-      
-      // If no users are found
-      if (users.length === 0) {
-          return res.status(404).json({ message: 'No users found' });
-      }
+    // Find all users in the database
+    const users = await signupUser.find();
 
-      // Return the list of users
-      res.status(200).json({
-          message: 'Users retrieved successfully',
-          users
-      });
+    // If no users are found
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    // Return the list of users
+    res.status(200).json({
+      message: 'Users retrieved successfully',
+      users
+    });
   } catch (err) {
-      // Error handling
-      console.error(err);
-      res.status(500).json({
-          message: 'An error occurred while fetching users',
-          error: err.message
-      });
+    // Error handling
+    console.error(err);
+    res.status(500).json({
+      message: 'An error occurred while fetching users',
+      error: err.message
+    });
   }
 }
+
+// export { createUser }

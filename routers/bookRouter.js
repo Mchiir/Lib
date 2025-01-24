@@ -1,10 +1,10 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+const router = Router();
 
-const bookController = require('../controllers/bookController');
-const verifyToken = require('../middlewares/authMiddleware');
+import { index } from '../controllers/bookController.js';
+import verifyToken from '../middlewares/authMiddleware.js';
 
 // Route for creating a new user
-router.get('/', verifyToken, bookController.index);
+router.get('/', verifyToken, index);
 
-module.exports = router;
+export default router;

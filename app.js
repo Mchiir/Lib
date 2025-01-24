@@ -1,26 +1,32 @@
-require('dotenv').config()
-const express = require('express')
-const mongoose = require('mongoose')
-const swaggerUi = require('swagger-ui-express')
-const swaggerDocument = require('./static/swagger.json') // Swagger JSON documentation file
-const { connectDB, disconnectDB } = require('./config/db'); // Import connect and disconnect
+import { config } from 'dotenv'
+import express, { json } from 'express'
+import mongoose from 'mongoose'
+import { serve, setup } from 'swagger-ui-express'
 
+const require = createRequire(import.meta.url)
+const swaggerDocument = require('./static/swagger.json'); 
+// Swagger JSON documentation file
+import { connectDB, disconnectDB } from './config/db.js' // Import connect and disconnect
+
+
+config()
 const app = express()
 
-app.use(express.json())
+app.use(json())
 
 // Serve Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use('/api-docs', serve, setup(swaggerDocument))
 
 connectDB(); // Connecting to MongoDB
 
-app.get('/', (req, res)=>{
-    res.send('Welcome to the Library Management System API')
+app.get('/', (req, res) => {
+  res.send('Welcome to the Library Management System API')
 })
 
-const authRoutes = require('./routers/authRouter')
-const studentRoutes = require('./routers/studentRouter')
-const bookRoutes = require('./routers/bookRouter')
+import authRoutes from './routers/authRouter.js'
+import studentRoutes from './routers/studentRouter.js'
+import bookRoutes from './routers/bookRouter.js'
+import { assert } from 'joi'
 
 app.use('/auth', authRoutes)
 app.use('/book', bookRoutes)
@@ -29,9 +35,9 @@ app.use('/student', studentRoutes)
 
 // Gracefully shut down the server on SIGINT signal (ctrl+c)
 process.on('SIGINT', async () => {
-    console.log('Received SIGINT. Closing MongoDB connection...\nServer stopped successfully.');
-    await disconnectDB(); // Disconnect from MongoDB gracefully
-    process.exit(0); // Exit the process gracefully
+  console.log('Received SIGINT. Closing MongoDB connection...\nServer stopped successfully.');
+  await disconnectDB(); // Disconnect from MongoDB gracefully
+  process.exit(0); // Exit the process gracefully
 });
 
 // Server Port

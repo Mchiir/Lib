@@ -1,35 +1,35 @@
-const Joi = require('joi');
+import { object, string, date, ref } from 'joi';
 
-const returnSchemaValidator = Joi.object({
-  stud_id: Joi.string()
+const returnSchemaValidator = object({
+  stud_id: string()
     .alphanum()   // Alphanumeric characters
     .min(3)
     .max(30)
     .required(),
 
-  stud_name: Joi.string()
+  stud_name: string()
     .min(3)
     .max(100)
     .required(),
 
-  stud_class: Joi.string()
+  stud_class: string()
     .min(3)
     .max(30)
     .required(),
 
-  book_name: Joi.string()
+  book_name: string()
     .min(5)
     .max(200)
     .required(),
 
-  borrowing_date: Joi.date()
+  borrowing_date: date()
     .iso()         // Ensures the date is in ISO 8601 format
     .required(),
 
-  return_date: Joi.date()
+  return_date: date()
     .iso()         // Ensures the date is in ISO 8601 format
     .required()
-    .greater(Joi.ref('borrowing_date')) // Ensure return date is later than borrowing date
+    .greater(ref('borrowing_date')) // Ensure return date is later than borrowing date
 });
 
-module.exports = returnSchemaValidator;
+export default returnSchemaValidator;

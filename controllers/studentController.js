@@ -1,5 +1,4 @@
-import Student, { findOne, insertMany, find, findOneAndUpdate, deleteOne, deleteMany } from '../models/Student'
-import validator from '../validators/studentValidator'
+import validator from '../validators/studentValidator.js'
 
 // Create a new student
 export async function createStudent(req, res) {

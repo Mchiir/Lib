@@ -1,15 +1,14 @@
-import { config } from 'dotenv'
+import { } from 'dotenv/config'
 import express, { json } from 'express'
 import mongoose from 'mongoose'
 import { serve, setup } from 'swagger-ui-express'
 
-const require = createRequire(import.meta.url)
-const swaggerDocument = require('./static/swagger.json');
+import { createRequire } from "module";
+const swaggerDocument = createRequire(import.meta.url)("./static/swagger.json");
 // Swagger JSON documentation file
-import './config/db.js' // Import connect and disconnect
+import { connectDB, disconnectDB } from './config/db.js' // Import connect and disconnect
 
 
-config()
 const app = express()
 
 app.use(json())

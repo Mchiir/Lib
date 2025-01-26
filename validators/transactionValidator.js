@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from "joi"
 
 const transactionSchemaValidator = Joi.object({
   stud_id: Joi.string()
@@ -35,4 +35,5 @@ const transactionSchemaValidator = Joi.object({
     .required()
 });
 
-module.exports = transactionSchemaValidator;
+
+export default transactionSchemaValidator

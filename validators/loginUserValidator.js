@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import Joi from "joi"
 
 const loginUserSchema = Joi.object().keys({
   username: Joi.string()
@@ -10,6 +10,6 @@ const loginUserSchema = Joi.object().keys({
     .min(8)
     .max(128)
     .required()
-})
+});
 
 export default loginUserSchema

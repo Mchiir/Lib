@@ -7,6 +7,5 @@ const studentSchema = new mongoose.Schema({
 });
 
 // Create a model based on the schema
-const Student = mongoose.model('Student', studentSchema);
+export const Student = mongoose.model('Student', studentSchema);
 
-module.exports = Student;

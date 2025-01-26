@@ -1,6 +1,5 @@
-import { } from 'dotenv/config'
+import "dotenv/config"
 import express, { json } from 'express'
-import mongoose from 'mongoose'
 import { serve, setup } from 'swagger-ui-express'
 
 import { createRequire } from "module";
@@ -15,8 +14,6 @@ app.use(json())
 
 // Serve Swagger UI
 app.use('/api-docs', serve, setup(swaggerDocument))
-
-connectDB(); // Connecting to MongoDB
 
 app.get('/', (req, res) => {
   res.send('Welcome to the Library Management System API')
@@ -41,6 +38,9 @@ process.on('SIGINT', async () => {
 
 // Server Port
 const PORT = process.env.PORT || 5000
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
 })

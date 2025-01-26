@@ -1,6 +1,6 @@
+import "dotenv/config"
 import { connect, disconnect } from 'mongoose'
 
-// Database connection URL (it will be pulled from .env file)
 const dbURI = process.env.MONGO_URI
 
 // Connection options
@@ -11,7 +11,6 @@ const options = {
   useCreateIndex: true,
 }
 
-// console.log(dbURI)
 
 /**
  * Connect to MongoDB

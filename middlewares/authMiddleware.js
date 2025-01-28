@@ -15,7 +15,7 @@ function verifyToken(req, res, next) {
     try {
         const secret = process.env.JWT_SECRET_KEY
         const decoded = jwt.verify(token, secret)
-        req.userId = decoded.userId // Attach userId to request object
+        req.user = decoded // Attach userId to request object
         next() // Continue to the next middleware or route handler
     } catch (error) {
         return res.status(401).json({ message: error.message })

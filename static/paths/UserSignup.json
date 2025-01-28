@@ -1,0 +1,39 @@
+{
+    "/auth/signup": {
+      "post": {
+        "summary": "Create a new user",
+        "description": "Creates a new user by signing up.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "User data to register",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignupRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/SignupResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., validation errors)",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+}  

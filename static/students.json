@@ -22,6 +22,21 @@
     {
       "stud_id": "S005",
       "stud_name": "Eve White",
-      "stud_class": "S5E"
+      "stud_class": "S5a"
+    },
+    {
+      "stud_id": "S001",
+      "stud_name": "Alice Johnson",
+      "stud_class": "S1A"
+    },
+    {
+      "stud_id": "S002",
+      "stud_name": "Bob Smith",
+      "stud_class": "S2B"
+    },
+    {
+      "stud_id": "S005",
+      "stud_name": "Eve White",
+      "stud_class": "S5A"
     }
 ]

@@ -14,6 +14,8 @@ const signupUserSchema = Joi.object({
 
   email: Joi.string()
     .email()
+    .min(5)
+    .max(100)
     .required(),
 
   password: Joi.string()
@@ -28,6 +30,8 @@ const signupUserSchema = Joi.object({
 
   user_profile_image: Joi.string()
     .uri()  // Validate if the user profile image is a valid URL
+    .min(6)
+    .max(128)
     .optional()
 })
 

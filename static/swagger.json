@@ -289,6 +289,502 @@
           }
         }
       }
+    },
+    "/student": {
+      "security": [
+          {
+            "Bearer": []
+          }
+        ],
+      "post": {
+        "summary": "Create a new student",
+        "description": "Creates a new student in the database.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "student",
+            "description": "Student details to be created",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stud_id": {
+                  "type": "string",
+                  "example": "S001"
+                },
+                "stud_name": {
+                  "type": "string",
+                  "example": "Alice Johnson"
+                },
+                "stud_class": {
+                  "type": "string",
+                  "example": "S1A"
+                }
+              },
+              "required": ["stud_id", "stud_name", "stud_class"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Student created successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Student created successfully"
+                },
+                "student": {
+                  "type": "string",
+                  "example": "Alice Johnson"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation or duplicate student ID",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Find a student by stud_id, stud_name, or stud_class",
+        "description": "Search for a student using query parameters. You can search by stud_id, stud_name, or stud_class.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "stud_id",
+            "description": "The ID of the student to search for",
+            "type": "string",
+            "example": "S001"
+          },
+          {
+            "in": "query",
+            "name": "stud_name",
+            "description": "The name of the student to search for",
+            "type": "string",
+            "example": "Alice Johnson"
+          },
+          {
+            "in": "query",
+            "name": "stud_class",
+            "description": "The class of the student to search for. Must be in the format S1 to S6 or S1A to S6D.",
+            "type": "string",
+            "example": "S1A"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Students found matching the criteria",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "students": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "stud_id": {
+                        "type": "string",
+                        "example": "S001"
+                      },
+                      "stud_name": {
+                        "type": "string",
+                        "example": "Alice Johnson"
+                      },
+                      "stud_class": {
+                        "type": "string",
+                        "example": "S1A"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid class format",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "No students found matching the criteria",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/student/addMany": {
+      "post": {
+        "summary": "Add multiple students",
+        "description": "Adds multiple students in a single request, ensuring no duplicates are added.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "students",
+            "description": "List of students to be added",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stud_id": {
+                    "type": "string",
+                    "example": "S001"
+                  },
+                  "stud_name": {
+                    "type": "string",
+                    "example": "Alice Johnson"
+                  },
+                  "stud_class": {
+                    "type": "string",
+                    "example": "S1A"
+                  }
+                },
+                "required": ["stud_id", "stud_name", "stud_class"]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Students added successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Students added successfully"
+                },
+                "addedStudents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "stud_id": {
+                        "type": "string",
+                        "example": "S001"
+                      },
+                      "stud_name": {
+                        "type": "string",
+                        "example": "Alice Johnson"
+                      },
+                      "stud_class": {
+                        "type": "string",
+                        "example": "S1A"
+                      }
+                    }
+                  }
+                },
+                "duplicateStudents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "stud_id": {
+                        "type": "string",
+                        "example": "S001"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Validation failed for some students",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/student/getAll": {
+      "get": {
+        "summary": "Get all students",
+        "description": "Retrieves all students in the system.",
+        "responses": {
+          "200": {
+            "description": "A list of all students",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "students": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "stud_id": {
+                        "type": "string",
+                        "example": "S001"
+                      },
+                      "stud_name": {
+                        "type": "string",
+                        "example": "Alice Johnson"
+                      },
+                      "stud_class": {
+                        "type": "string",
+                        "example": "S1A"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No students found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/student/{_id}": {
+      "put": {
+        "summary": "Edit a student's information",
+        "description": "Update a student's details such as name, class, etc., using their student ID (_id).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "description": "The unique ID of the student to be updated.",
+            "type": "string",
+            "example": "607d1f77bcf86cd799439011"
+          },
+          {
+            "in": "body",
+            "name": "student",
+            "description": "The student information to update.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "stud_name": {
+                  "type": "string",
+                  "example": "John Doe"
+                },
+                "stud_class": {
+                  "type": "string",
+                  "example": "S2B"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Student updated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Student updated successfully"
+                },
+                "student": {
+                  "type": "object",
+                  "properties": {
+                    "stud_id": {
+                      "type": "string",
+                      "example": "S001"
+                    },
+                    "stud_name": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "stud_class": {
+                      "type": "string",
+                      "example": "S2B"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid data provided",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "Student not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/student/deleteOne/{_id}": {
+      "delete": {
+        "summary": "Delete a student by their ID",
+        "description": "Delete a student based on their unique student ID (_id).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "_id",
+            "required": true,
+            "description": "The unique ID of the student to be deleted.",
+            "type": "string",
+            "example": "607d1f77bcf86cd799439011"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Student deleted successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Student deleted successfully"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "John Doe"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Student not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/student/deleteAll": {
+      "delete": {
+        "summary": "Delete all students",
+        "description": "Delete all students in the database.",
+        "responses": {
+          "200": {
+            "description": "All students deleted successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "All students deleted successfully"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No students found to delete",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/student/deleteBatch": {
+      "delete": {
+        "summary": "Delete a batch of students",
+        "description": "Delete multiple students in a single request based on an array of student IDs.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "stud_ids",
+            "description": "An array of student IDs to be deleted.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "example": "S001"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Batch of students deleted successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "3 students deleted successfully"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid or empty student IDs array",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "404": {
+            "description": "No students found for the provided IDs",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {

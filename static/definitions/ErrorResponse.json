@@ -1,0 +1,15 @@
+{
+    "ErrorResponse": {
+        "type": "object",
+        "properties": {
+            "message": {
+            "type": "string",
+            "example": "Invalid username or password"
+            },
+            "error": {
+            "type": "string",
+            "example": "Bad Request"
+            }
+        }
+    }
+}

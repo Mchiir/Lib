@@ -89,7 +89,7 @@ export const login = async (req, res) => {
 
     // Create JWT token
     const token = jwt.sign(
-      { userId: user._id, username: user.username },
+      { userId: user._id, username: user.username, role: user.role, email: user.email },
       process.env.JWT_SECRET_KEY, // Secret key for signing
       { expiresIn: process.env.JWT_EXPIRATION || '1h' } // Token expiration time (1 hour in this case)
     );
@@ -114,15 +114,15 @@ export const login = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { error, value } = signupUserSchema.validate(req.body);
-
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const userId = req.user._id;
+    // Get the username from the authenticated user
+    const username = req.user.username;
 
-    // Check if user exists
-    const user = await signupUser.findById(userId);
+    // Check if user exists by username
+    const user = await signupUser.findOne({ username: username });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -134,7 +134,8 @@ export const updateUser = async (req, res) => {
     }
 
     // Update the user with the new values
-    const updatedUser = await signupUser.findByIdAndUpdate(userId, value, { new: true });
+    // We are using the user's _id to update the user
+    const updatedUser = await signupUser.findByIdAndUpdate(user._id, value, { new: true });
 
     res.status(200).json({
       message: 'User updated successfully',
@@ -148,7 +149,8 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const userId = req.user._id;
+    console.log(req.user);
+    const userId = req.user.userId || 10;
 
     const user = await signupUser.findById(userId);
     if (!user) {
@@ -169,7 +171,7 @@ export const deleteUser = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const { username } = req.params; // Assuming you're using username for fetching the user
+    const { username } = req.user; // as passed down from jwt middleware
 
     // Find user by username in the database
     const user = await signupUser.findOne({ username });
@@ -196,9 +198,14 @@ export const getUser = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
+    // console.log(req.user)
     // Find all users in the database
     const users = await signupUser.find();
 
+    // checking for eligibility of accessing data.
+    if(req.user.role != "ADMIN"){
+      return res.status(401).json({ message: `Sorry!, you're not eligible to get these data.` });
+    }
     // If no users are found
     if (users.length === 0) {
       return res.status(404).json({ message: 'No users found' });

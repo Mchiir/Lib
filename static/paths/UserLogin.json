@@ -1,0 +1,39 @@
+{
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "description": "Logs in the user and returns a JWT token if credentials are correct.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "User credentials for login",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., invalid credentials)",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+}

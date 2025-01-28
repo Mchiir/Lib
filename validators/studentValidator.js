@@ -14,7 +14,7 @@ const studentSchema = Joi.object().keys({
     }),
 
   stud_name: Joi.string()
-    .alphanum()
+    .pattern(/^[a-zA-Z\s]+$/)  // Allow only letters and spaces
     .min(3)
     .max(100)
     .required()
@@ -22,19 +22,21 @@ const studentSchema = Joi.object().keys({
       'string.base': 'Student name must be a string.',
       'string.min': 'Student name must be at least 3 characters long.',
       'string.max': 'Student name must be at most 100 characters long.',
-      'any.required': 'Student name is required.'
+      'any.required': 'Student name is required.',
+      'string.pattern.base': 'Student name must only contain letters and spaces.'  // Custom message for invalid characters
     }),
 
   stud_class: Joi.string()
-    .alphanum()
-    .min(3)
-    .max(30)
+    .pattern(/^S[1-6][A-D]$/i)  // Regex to match the pattern "S1A", "S2B", ..., "S6D", case-insensitive
     .required()
     .messages({
       'string.base': 'Student class must be a string.',
-      'string.min': 'Student class must be at least 3 characters long.',
-      'string.max': 'Student class must be at most 30 characters long.',
+      'string.empty': 'Student class cannot be empty.',
+      'string.pattern.base': `Student class must be in the format "S1A", "S2B", ..., "S6D".`,
       'any.required': 'Student class is required.'
+    }).custom((value, helper) => {
+      // Convert the value to uppercase after validation
+      return value.toUpperCase();
     })
 });
 

@@ -1,4 +1,6 @@
 import validator from '../validators/studentValidator.js'
+import { Student } from '../models/Student.js'
+import Joi from 'joi'
 
 // Create a new student
 export async function createStudent(req, res) {
@@ -13,7 +15,7 @@ export async function createStudent(req, res) {
     const { stud_id, stud_name, stud_class } = value
 
     // Check if the student already exists by stud_id (or any other unique identifier)
-    const existingStudent = await findOne({ stud_id })
+    const existingStudent = await Student.findOne({stud_id: stud_id})
     if (existingStudent) {
       return res.status(400).json({ message: 'Student with this ID already exists' })
     }
@@ -42,67 +44,109 @@ export async function addStudents(req, res) {
   try {
     // Validate the input data
     if (!Array.isArray(req.body)) {
-      return res.status(400).json({ message: 'Input must be an array of students' })
+      return res.status(400).json({ message: 'Input must be an array of students' });
     }
 
     // Validate each student object
-    const invalidStudents = []
-    const validStudents = []
+    const invalidStudents = [];
+    const validStudents = [];
     for (const student of req.body) {
-      const { error, value } = validator.validate(student)
+      const { error, value } = validator.validate(student);
       if (error) {
-        invalidStudents.push({ student, error: error.details[0].message })
+        invalidStudents.push({ student, error: error.details[0].message });
       } else {
-        validStudents.push(value)
+        validStudents.push(value);
       }
     }
 
     if (invalidStudents.length > 0) {
-      return res.status(400).json({ message: 'Validation failed for some students', invalidStudents })
+      return res.status(400).json({ message: 'Validation failed for some students', invalidStudents });
     }
 
-    // Save all valid students in the database
-    await insertMany(validStudents)
+    // Check for duplicate stud_id
+    const existingStudents = await Student.find({ stud_id: { $in: validStudents.map(s => s.stud_id) } });
+
+    // Create an array of existing stud_ids
+    const existingStudIds = existingStudents.map(s => s.stud_id);
+
+    // Filter out students that already exist in the database
+    const studentsToAdd = validStudents.filter(student => !existingStudIds.includes(student.stud_id));
+
+    // If there are students to add
+    if (studentsToAdd.length > 0) {
+      // Insert new students
+      await Student.insertMany(studentsToAdd);
+    }
+
+    // If there were students that already exist, respond accordingly
+    const duplicateStudents = validStudents.filter(student => existingStudIds.includes(student.stud_id));
+
     res.status(201).json({
       message: 'Students added successfully',
-      addedStudents: validStudents,
-    })
+      addedStudents: studentsToAdd,
+      duplicateStudents: duplicateStudents.length > 0 ? duplicateStudents : undefined,
+    });
+
   } catch (err) {
-    console.error(err)
-    res.status(500).json({ message: 'An error occurred while adding students' })
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while adding students' });
   }
 }
 
 // Find a student by stud_id or stud_name
 export async function findStudent(req, res) {
   try {
-    const { stud_id, stud_name } = req.query
+    // Access query parameters from req.query
+    const { stud_id, stud_name, stud_class } = req.query;
 
-    let query = {}
+    let query = {};
+
+    // If stud_id is provided, add it to the query filter
     if (stud_id) {
-      query.stud_id = stud_id
+      query.stud_id = stud_id;
     }
+
+    // If stud_name is provided, add it to the query filter
     if (stud_name) {
-      query.stud_name = stud_name
+      query.stud_name = stud_name;
     }
 
-    // Search for student in the database
-    const student = await findOne(query)
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found' })
+    if (stud_class) {
+      const levelRegex = /^S[1-6]$/i; // Matches "S1", "S2", ..., "S6"
+      const classRegex = /^S[1-6][A-D]$/i; // Matches "S1A", "S2B", ..., "S6D"
+
+      if (levelRegex.test(stud_class)) {
+        query.stud_class = { $regex: `^${stud_class}[A-D]$`, $options: 'i' }; // Case-insensitive regex for matching sections A-D
+      } else if (classRegex.test(stud_class)) {
+        query.stud_class = stud_class.toUpperCase(); // Convert to uppercase for consistent storage
+      } else {
+        return res.status(400).json({ message: 'Invalid class format. Use "S1" through "S6" for levels or "S1A" through "S6D" for full classes.' });
+      }
     }
 
-    res.status(200).json({ student })
+    console.log('Query:', query);
+
+    const students = await Student.find(query);
+
+    if (students.length === 0) {
+      return res.status(404).json({ message: 'No students found matching the criteria' });
+    }
+
+    res.status(200).json({ students });
   } catch (err) {
-    console.error(err)
-    res.status(500).json({ message: 'An error occurred while finding the student' })
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while finding the students' });
   }
 }
 
 // Get all students
 export async function getAllStudents(req, res) {
   try {
-    const students = await find()
+    const students = await Student.find()
+    if (students.length == 0) {
+      return res.status(404).json({ message: 'Students not found' });
+    }
+
     res.status(200).json({ students })
   } catch (err) {
     console.error(err)
@@ -118,16 +162,16 @@ export async function editStudent(req, res) {
       return res.status(400).json({ error: error.details[0].message });
     }
 
-    const { stud_id } = req.body;
+    const { _id } = req.params;
 
     // Find the student by stud_id
-    const student = await findOne({ stud_id });
+    const student = await Student.findOne({ _id });
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
     }
 
     // Update student data
-    const updatedStudent = await findOneAndUpdate({ stud_id }, value, { new: true });
+    const updatedStudent = await Student.findOneAndUpdate({ _id }, value, { new: true });
 
     res.status(200).json({
       message: 'Student updated successfully',
@@ -141,19 +185,20 @@ export async function editStudent(req, res) {
 
 export async function deleteStudent(req, res) {
   try {
-    const { stud_id } = req.body;
+    const { _id } = req.params;
 
     // Find the student by stud_id
-    const student = await findOne({ stud_id });
+    const student = await Student.findOne({ _id });
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
     }
 
     // Delete the student
-    await deleteOne({ stud_id });
+    const deletedStudent = await Student.deleteOne({ _id });
 
     res.status(200).json({
       message: 'Student deleted successfully',
+      name: student.stud_name
     });
   } catch (err) {
     console.error(err);
@@ -163,8 +208,17 @@ export async function deleteStudent(req, res) {
 
 export async function deleteAllStudents(req, res) {
   try {
-    // Delete all students from the collection
-    await deleteMany({});
+    // Example: Check if the user is authorized (admin role or similar)
+    // if (!req.user || req.user.role !== 'ADMIN') {
+    //   return res.status(403).json({ message: 'Permission denied' });
+    // }
+
+    const result = await Student.deleteMany();
+
+    // Check if any students were actually deleted
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'No students found to delete' });
+    }
 
     res.status(200).json({
       message: 'All students deleted successfully',
@@ -177,7 +231,7 @@ export async function deleteAllStudents(req, res) {
 
 export async function deleteBatchOfStudents(req, res) {
   try {
-    const { stud_ids } = req.body; // An array of stud_ids
+    const stud_ids = req.body; // An array of stud_ids
 
     // Ensure stud_ids is an array
     if (!Array.isArray(stud_ids) || stud_ids.length === 0) {
@@ -185,7 +239,7 @@ export async function deleteBatchOfStudents(req, res) {
     }
 
     // Delete students in the provided array
-    const result = await deleteMany({ stud_id: { $in: stud_ids } });
+    const result = await Student.deleteMany({ stud_id: { $in: stud_ids } });
 
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: 'No students found for the provided IDs' });

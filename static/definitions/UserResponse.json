@@ -1,0 +1,23 @@
+{
+    "UserResponse": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "johndoe"
+        },
+        "full_name": {
+          "type": "string",
+          "example": "John Doe"
+        },
+        "email": {
+          "type": "string",
+          "example": "johndoe@gmail.com"
+        },
+        "role": {
+          "type": "string",
+          "example": "USER"
+        }
+      }
+    }
+}

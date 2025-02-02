@@ -47,31 +47,29 @@ export async function getAllBooks(req, res) {
   }
 }
 
-const validateField = (field, regex, errorMessage) => {
-  if (field && !regex.test(field)) {
-    return { valid: false, message: errorMessage };
-  }
-  return { valid: true };
-};
-
 // Get a book
 export async function findBook(req, res) {
   try {
+    // Check if no query parameters are provided
+    if (_.isEmpty(req.query)) {
+      return res.status(400).json({ message: "At least one book property must be provided." });
+    }
+
     // Access query parameters from req.query
     const { book_id, book_no, publisher, title, category, level } = req.query;
-
+    // console.log(Object.keys(req.query))
     let query = {};
 
      // Validate book_id using Lodash isString
-     if (book_id && _.isString(book_id)) {
+    if (book_id && _.isString(book_id)) {
       query._id = book_id;
     } else if (book_id) {
       return res.status(400).json({ message: 'Book ID must be a string.' });
     }
 
-    // Validate book_no using Lodash isNumber, isInteger, and max digits check
-if (book_no && _.isNumber(Number(book_no)) && _.isInteger(Number(book_no))) {
-  const bookNoValue = Number(book_no);
+  // Validate book_no using Lodash isNumber, isInteger, and max digits check
+  if (book_no && _.isNumber(Number(book_no)) && _.isInteger(Number(book_no))) {
+    const bookNoValue = Number(book_no);
   
   // Check if the number of digits is within the maximum allowed limit (10 digits)
   if (bookNoValue.toString().length <= 10) {
@@ -85,23 +83,16 @@ if (book_no && _.isNumber(Number(book_no)) && _.isInteger(Number(book_no))) {
 
      // Validate publisher using Lodash isString and length check
      if (publisher && _.isString(publisher) && publisher.length >= 3 && publisher.length <= 100) {
-      query.publisher = publisher;
+      query.publisher = { $regex: `^${_.escapeRegExp(publisher)}$`, $options: "i" };
     } else if (publisher) {
       return res.status(400).json({ message: 'Publisher must be a string between 3 and 100 characters.' });
     }
 
-    // Validate title using Lodash isString and length check
-    if (title && _.isString(title) && title.length >= 3 && title.length <= 200) {
-      query.title = title;
-    } else if (title) {
-      return res.status(400).json({ message: 'Title must be a string between 3 and 200 characters.' });
-    }
-
     // Validate category using Lodash isString and check if it's one of the allowed categories
     if (category && _.isString(category) && 
-    ['Physics', 'Math', 'Chemistry', 'Biology', 'History', 'Literature', 'Geography', 'English', 'Kinyarwanda', 'Entrepreneurship', 'ICT']
-    .includes(category)) {
-      query.category = category;
+    ['PHYSICS', 'MATHEMATICS', 'CHEMISTRY', 'BIOLOGY', 'HISTORY', 'LITERATURE', 'GEOGRAPHY', 'ENGLISH', 'KINYARWANDA', 'ENTREPRENEURSHIP', 'ICT']
+    .includes(category.toUpperCase())) {
+      query.category = { $regex: `^${_.escapeRegExp(category)}$`, $options: "i" };
     } else if (category) {
       return res.status(400).json({ message: 'Category must be a valid subject.' });
     }
@@ -111,6 +102,10 @@ if (book_no && _.isNumber(Number(book_no)) && _.isInteger(Number(book_no))) {
       query.level = level.toUpperCase();
     } else if (level) {
       return res.status(400).json({ message: 'Level must be in the format "S1", "S2", ..., "S6".' });
+    }
+
+    if(_.isEmpty(query)){
+      return res.status(400).json({ message: `Please provide valid query parameters, 'book_id', 'book_no', 'publisher', 'title', 'category', 'level'`  });
     }
 
     // Search for books based on the query
@@ -132,18 +127,40 @@ if (book_no && _.isNumber(Number(book_no)) && _.isInteger(Number(book_no))) {
 
 
 // Get available books
-export async function getAvailableBooks(req, res) {
+export async function getByAvailability(req, res) {
   try {
-    const availableBooks = await Book.find({ isAvailable: true });
-    if (availableBooks.length === 0) {
-      return res.status(404).json({ message: 'No available books at the moment' });
+    let query = {};
+
+    if (!_.isEmpty(req.query) && _.has(req.query, "isAvailable")) {
+      const isAvailableStr = req.query.isAvailable;
+
+      // Convert to boolean safely
+      if (isAvailableStr === "true" || isAvailableStr === "1") {
+        query.isAvailable = true;
+      } else if (isAvailableStr === "false" || isAvailableStr === "0") {
+        query.isAvailable = false;
+      } else {
+        return res.status(400).json({ message: 'isAvailable must be either "true" or "false".' });
+      }
+    } else {
+      // Default: return only available books
+      query.isAvailable = true;
     }
-    res.status(200).json({ availableBooks });
+
+    const books = await Book.find(query);
+
+    if (_.isEmpty(books)) {
+      return res.status(404).json({ message: "No books found with the given availability status." });
+    }
+
+    res.status(200).json({ books });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Error fetching available books', error: err.message });
+    res.status(500).json({ message: "Error fetching books", error: err.message });
   }
 }
+
 
 // Update book info
 export async function updateBook(req, res) {
@@ -175,7 +192,7 @@ export async function deleteBook(req, res) {
     if (!deletedBook) {
       return res.status(404).json({ message: 'Book not found' });
     }
-    res.status(200).json({ message: 'Book deleted successfully' });
+    res.status(200).json({ message: 'Book deleted successfully', deletedBook });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error deleting book', error: err.message });

@@ -17,6 +17,7 @@
       "get": {
         "summary": "Welcome message",
         "description": "Returns a simple welcome message for the Library Management System API.",
+        "tags":["Default"],
         "responses": {
           "200": {
             "description": "Welcome message",
@@ -32,6 +33,7 @@
       "post": {
         "summary": "Create a new user",
         "description": "Creates a new user by signing up.",
+        "tags":["Authorization"],
         "parameters": [
           {
             "in": "body",
@@ -69,6 +71,7 @@
       "post": {
         "summary": "User login",
         "description": "Logs in the user and returns a JWT token if credentials are correct.",
+        "tags":["Authorization"],
         "parameters": [
           {
             "in": "body",
@@ -106,6 +109,7 @@
       "get": {
         "summary": "Get the current user",
         "description": "Fetches the details of the currently authenticated user.",
+        "tags":["Authorization"],
         "security": [
           {
             "Bearer": []
@@ -135,6 +139,7 @@
       "put": {
         "summary": "Update user details",
         "description": "Updates the details of the currently authenticated user.",
+        "tags":["Authorization"],
         "security": [
           {
             "Bearer": []
@@ -181,6 +186,7 @@
       "delete": {
         "summary": "Delete the current user",
         "description": "Deletes the currently authenticated user.",
+        "tags":["Authorization"],
         "security": [
           {
             "Bearer": []
@@ -212,6 +218,7 @@
       "get": {
         "summary": "Get all users",
         "description": "Fetches a list of all users.",
+        "tags":["Authorization"],
         "security": [
           {
             "Bearer": []
@@ -242,54 +249,8 @@
         }
       }
     },
-    "/book": {
-      "get": {
-        "summary": "Get list of books",
-        "description": "Returns a list of books, but requires authentication via Bearer token.",
-        "security": [
-          {
-            "Bearer": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of books",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "example": "1"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "The Great Gatsby"
-                  },
-                  "author": {
-                    "type": "string",
-                    "example": "F. Scott Fitzgerald"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized (missing or invalid token)",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
+
+
     "/student": {
       "security": [
           {
@@ -299,6 +260,7 @@
       "post": {
         "summary": "Create a new student",
         "description": "Creates a new student in the database.",
+        "tags":["Students"],
         "parameters": [
           {
             "in": "body",
@@ -359,6 +321,7 @@
       "get": {
         "summary": "Find a student by stud_id, stud_name, or stud_class",
         "description": "Search for a student using query parameters. You can search by stud_id, stud_name, or stud_class.",
+        "tags":["Students"],
         "parameters": [
           {
             "in": "query",
@@ -436,6 +399,7 @@
       "post": {
         "summary": "Add multiple students",
         "description": "Adds multiple students in a single request, ensuring no duplicates are added.",
+        "tags":["Students"],
         "parameters": [
           {
             "in": "body",
@@ -529,6 +493,7 @@
       "get": {
         "summary": "Get all students",
         "description": "Retrieves all students in the system.",
+        "tags":["Students"],
         "responses": {
           "200": {
             "description": "A list of all students",
@@ -577,6 +542,7 @@
       "put": {
         "summary": "Edit a student's information",
         "description": "Update a student's details such as name, class, etc., using their student ID (_id).",
+        "tags":["Students"],
         "parameters": [
           {
             "in": "path",
@@ -660,6 +626,7 @@
       "delete": {
         "summary": "Delete a student by their ID",
         "description": "Delete a student based on their unique student ID (_id).",
+        "tags":["Students"],
         "parameters": [
           {
             "in": "path",
@@ -706,6 +673,7 @@
       "delete": {
         "summary": "Delete all students",
         "description": "Delete all students in the database.",
+        "tags":["Students"],
         "responses": {
           "200": {
             "description": "All students deleted successfully",
@@ -738,6 +706,7 @@
       "delete": {
         "summary": "Delete a batch of students",
         "description": "Delete multiple students in a single request based on an array of student IDs.",
+        "tags":["Students"],
         "parameters": [
           {
             "in": "body",
@@ -783,6 +752,124 @@
               "$ref": "#/definitions/ErrorResponse"
             }
           }
+        }
+      }
+    },
+
+    
+    "/books": {
+      "post": {
+        "summary": "Add a new book",
+        "tags": ["Books"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": { "$ref": "#/definitions/Book" }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Book added successfully" },
+          "400": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/books/findAll": {
+      "get": {
+        "summary": "Get all books",
+        "tags": ["Books"],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "List of all books",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Book" } }
+          },
+          "404": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/books/getByAvailability": {
+      "get": {
+        "summary": "Get available books",
+        "tags": ["Books"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "isAvailable",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available books",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Book" } }
+          },
+          "404": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/books/findBook": {
+      "get": {
+        "summary": "Find books by query parameters",
+        "tags": ["Books"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "book_id", "in": "query", "type": "string" },
+          { "name": "book_no", "in": "query", "type": "integer" },
+          { "name": "publisher", "in": "query", "type": "string" },
+          { "name": "category", "in": "query", "type": "string" },
+          { "name": "level", "in": "query", "type": "string" }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matching books",
+            "schema": { "type": "array", "items": { "$ref": "#/definitions/Book" } }
+          },
+          "404": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/books/{book_id}": {
+      "put": {
+        "summary": "Update a book",
+        "tags": ["Books"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "book_id", "in": "path", "required": true, "type": "string" },
+          { "in": "body", "name": "body", "required": true, "schema": { "$ref": "#/definitions/Book" } }
+        ],
+        "responses": {
+          "200": { "description": "Book updated successfully" },
+          "404": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/books/deleteById/{book_id}": {
+      "delete": {
+        "summary": "Delete a book",
+        "tags": ["Books"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          { "name": "book_id", "in": "path", "required": true, "type": "string" }
+        ],
+        "responses": {
+          "200": { "description": "Book deleted successfully" },
+          "404": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/books/deleteAll": {
+      "delete": {
+        "summary": "Delete all books",
+        "tags": ["Books"],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": { "description": "All books deleted successfully" },
+          "404": { "$ref": "#/definitions/ErrorResponse" }
         }
       }
     }
@@ -877,6 +964,20 @@
           "type": "string",
           "example": "USER"
         }
+      }
+    },
+    "Book": {
+      "type": "object",
+      "properties": {
+        "book_no": { "type": "integer", "example": 123456 },
+        "publisher": { "type": "string", "example": "Pearson" },
+        "category": { "type": "string", "enum": [
+          "Physics", "Mathematics", "Chemistry", "Biology",
+          "History", "Literature", "Geography", "English",
+          "Ikinyarwanda", "Entrepreneurship", "ICT"
+        ] },
+        "level": { "type": "string", "example": "S1" },
+        "isAvailable": { "type": "boolean", "example": true }
       }
     },
     "ErrorResponse": {

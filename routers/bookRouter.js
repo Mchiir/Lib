@@ -5,7 +5,7 @@ import {
   findBook,
   updateBook,
   deleteBook,
-  getAvailableBooks,
+  getByAvailability,
   deleteAllBooks
 } from '../controllers/bookController.js'
 
@@ -13,7 +13,7 @@ const router = Router()
 
 router.post('/', addBook)
 router.get('/findAll', getAllBooks)
-router.get('/getAvailable/available', getAvailableBooks)
+router.get('/getByAvailability', getByAvailability)
 router.get('/findBook', findBook)
 
 router.put('/:book_id', updateBook)

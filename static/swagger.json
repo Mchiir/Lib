@@ -267,24 +267,7 @@
             "name": "student",
             "description": "Student details to be created",
             "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "stud_id": {
-                  "type": "string",
-                  "example": "S001"
-                },
-                "stud_name": {
-                  "type": "string",
-                  "example": "Alice Johnson"
-                },
-                "stud_class": {
-                  "type": "string",
-                  "example": "S1A"
-                }
-              },
-              "required": ["stud_id", "stud_name", "stud_class"]
-            }
+            "schema": { "$ref": "#/definitions/Student" }
           }
         ],
         "responses": {
@@ -964,6 +947,14 @@
           "type": "string",
           "example": "USER"
         }
+      }
+    },
+    "Student":{
+      "type":"object",
+      "properties":{
+        "stud_id":{ "type":"string", "example": "EFOTEC1213"},
+        "stud_name":{ "type":"string", "example":"Murindwa Phanuel" },
+        "stud_class":{ "type":"string", "example":"S1A, S1B, ... S6D"}
       }
     },
     "Book": {

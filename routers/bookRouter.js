@@ -8,8 +8,10 @@ import {
   getByAvailability,
   deleteAllBooks
 } from '../controllers/bookController.js'
+import { verifyToken } from '../middlewares/authMiddleware.js'
 
 const router = Router()
+router.use(verifyToken)
 
 router.post('/', addBook)
 router.get('/findAll', getAllBooks)

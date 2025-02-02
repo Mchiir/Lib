@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 
 import authRoutes from './routers/authRouter.js'
 import { studentRoutes } from './routers/studentRouter.js'
-import bookRoutes from './routers/bookRouter.js'
+import { router as bookRoutes } from './routers/bookRouter.js'
 import assert from 'joi'
 
 app.use('/auth', authRoutes)
@@ -41,6 +41,6 @@ const PORT = process.env.PORT || 5000
 
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
+    console.log(`Server running on http://localhost:${PORT}`)
   })
 })

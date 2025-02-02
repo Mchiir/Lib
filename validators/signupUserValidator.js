@@ -24,7 +24,7 @@ const signupUserSchema = Joi.object({
     .required(),
 
   role: Joi.string()
-    .valid('STUDENT', 'LIBRARIAN', 'ADMIN', 'USER')
+    .valid('STUDENT', 'LIBRARIAN', 'ADMIN', 'USER', 'PREFECT')
     .default('user')
     .required(),
 

@@ -1,10 +1,23 @@
-import { Router } from 'express';
-const router = Router();
+import { Router } from 'express'
+import {
+  addBook,
+  getAllBooks,
+  findBook,
+  updateBook,
+  deleteBook,
+  getAvailableBooks,
+  deleteAllBooks
+} from '../controllers/bookController.js'
 
-import { index } from '../controllers/bookController.js';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+const router = Router()
 
-// Route for creating a new user
-router.get('/', verifyToken, index);
+router.post('/', addBook)
+router.get('/findAll', getAllBooks)
+router.get('/getAvailable/available', getAvailableBooks)
+router.get('/findBook', findBook)
 
-export default router;
+router.put('/:book_id', updateBook)
+router.delete('/deleteById/:book_id', deleteBook)
+router.delete('/deleteAll', deleteAllBooks)
+
+export { router }

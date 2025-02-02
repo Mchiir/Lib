@@ -31,6 +31,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "dependencies": {
-    "joi": "^17.13.3"
+    "joi": "^17.13.3",
+    "lodash": "^4.17.21"
   }
 }

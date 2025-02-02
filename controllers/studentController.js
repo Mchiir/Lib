@@ -124,7 +124,7 @@ export async function findStudent(req, res) {
       }
     }
 
-    console.log('Query:', query);
+    // console.log('Query:', query);
 
     const students = await Student.find(query);
 

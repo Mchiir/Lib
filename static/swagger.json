@@ -252,15 +252,15 @@
 
 
     "/student": {
-      "security": [
-          {
-            "Bearer": []
-          }
-        ],
       "post": {
         "summary": "Create a new student",
         "description": "Creates a new student in the database.",
         "tags":["Students"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "parameters": [
           {
             "in": "body",
@@ -305,6 +305,11 @@
         "summary": "Find a student by stud_id, stud_name, or stud_class",
         "description": "Search for a student using query parameters. You can search by stud_id, stud_name, or stud_class.",
         "tags":["Students"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "parameters": [
           {
             "in": "query",
@@ -336,23 +341,7 @@
               "properties": {
                 "students": {
                   "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "stud_id": {
-                        "type": "string",
-                        "example": "S001"
-                      },
-                      "stud_name": {
-                        "type": "string",
-                        "example": "Alice Johnson"
-                      },
-                      "stud_class": {
-                        "type": "string",
-                        "example": "S1A"
-                      }
-                    }
-                  }
+                  "items": { "$ref": "#/definitions/Student" }
                 }
               }
             }
@@ -383,33 +372,18 @@
         "summary": "Add multiple students",
         "description": "Adds multiple students in a single request, ensuring no duplicates are added.",
         "tags":["Students"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "parameters": [
           {
             "in": "body",
             "name": "students",
             "description": "List of students to be added",
             "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "stud_id": {
-                    "type": "string",
-                    "example": "S001"
-                  },
-                  "stud_name": {
-                    "type": "string",
-                    "example": "Alice Johnson"
-                  },
-                  "stud_class": {
-                    "type": "string",
-                    "example": "S1A"
-                  }
-                },
-                "required": ["stud_id", "stud_name", "stud_class"]
-              }
-            }
+            "schema": { "$ref": "#/definitions/StudentArray" }
           }
         ],
         "responses": {
@@ -422,38 +396,8 @@
                   "type": "string",
                   "example": "Students added successfully"
                 },
-                "addedStudents": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "stud_id": {
-                        "type": "string",
-                        "example": "S001"
-                      },
-                      "stud_name": {
-                        "type": "string",
-                        "example": "Alice Johnson"
-                      },
-                      "stud_class": {
-                        "type": "string",
-                        "example": "S1A"
-                      }
-                    }
-                  }
-                },
-                "duplicateStudents": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "stud_id": {
-                        "type": "string",
-                        "example": "S001"
-                      }
-                    }
-                  }
-                }
+                "addedStudents": { "$ref": "#/definitions/StudentArray" },
+                "duplicateStudents": { "$ref":"#/definitions/StudentArray" }
               }
             }
           },
@@ -477,32 +421,18 @@
         "summary": "Get all students",
         "description": "Retrieves all students in the system.",
         "tags":["Students"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "A list of all students",
             "schema": {
               "type": "object",
               "properties": {
-                "students": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "stud_id": {
-                        "type": "string",
-                        "example": "S001"
-                      },
-                      "stud_name": {
-                        "type": "string",
-                        "example": "Alice Johnson"
-                      },
-                      "stud_class": {
-                        "type": "string",
-                        "example": "S1A"
-                      }
-                    }
-                  }
-                }
+                "students": { "$ref":"#/definitions/StudentArray" }
               }
             }
           },
@@ -526,6 +456,11 @@
         "summary": "Edit a student's information",
         "description": "Update a student's details such as name, class, etc., using their student ID (_id).",
         "tags":["Students"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -539,19 +474,7 @@
             "in": "body",
             "name": "student",
             "description": "The student information to update.",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "stud_name": {
-                  "type": "string",
-                  "example": "John Doe"
-                },
-                "stud_class": {
-                  "type": "string",
-                  "example": "S2B"
-                }
-              }
-            }
+            "schema": { "$ref":"#/definitions/Student" }
           }
         ],
         "responses": {
@@ -566,20 +489,7 @@
                 },
                 "student": {
                   "type": "object",
-                  "properties": {
-                    "stud_id": {
-                      "type": "string",
-                      "example": "S001"
-                    },
-                    "stud_name": {
-                      "type": "string",
-                      "example": "John Doe"
-                    },
-                    "stud_class": {
-                      "type": "string",
-                      "example": "S2B"
-                    }
-                  }
+                  "properties": { "students":{ "$ref": "#/definitions/Student" } }
                 }
               }
             }
@@ -610,6 +520,11 @@
         "summary": "Delete a student by their ID",
         "description": "Delete a student based on their unique student ID (_id).",
         "tags":["Students"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -657,6 +572,11 @@
         "summary": "Delete all students",
         "description": "Delete all students in the database.",
         "tags":["Students"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "All students deleted successfully",
@@ -690,18 +610,17 @@
         "summary": "Delete a batch of students",
         "description": "Delete multiple students in a single request based on an array of student IDs.",
         "tags":["Students"],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
         "parameters": [
           {
             "in": "body",
             "name": "stud_ids",
             "description": "An array of student IDs to be deleted.",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "example": "S001"
-              }
-            }
+            "schema": { "$ref":"#/definitions/StudentIDList" }
           }
         ],
         "responses": {
@@ -740,7 +659,7 @@
     },
 
     
-    "/books": {
+    "/book": {
       "post": {
         "summary": "Add a new book",
         "tags": ["Books"],
@@ -759,7 +678,7 @@
         }
       }
     },
-    "/books/findAll": {
+    "/book/findAll": {
       "get": {
         "summary": "Get all books",
         "tags": ["Books"],
@@ -773,7 +692,7 @@
         }
       }
     },
-    "/books/getByAvailability": {
+    "/book/getByAvailability": {
       "get": {
         "summary": "Get available books",
         "tags": ["Books"],
@@ -795,7 +714,7 @@
         }
       }
     },
-    "/books/findBook": {
+    "/book/findBook": {
       "get": {
         "summary": "Find books by query parameters",
         "tags": ["Books"],
@@ -816,7 +735,7 @@
         }
       }
     },
-    "/books/{book_id}": {
+    "/book/{book_id}": {
       "put": {
         "summary": "Update a book",
         "tags": ["Books"],
@@ -831,7 +750,7 @@
         }
       }
     },
-    "/books/deleteById/{book_id}": {
+    "/book/deleteById/{book_id}": {
       "delete": {
         "summary": "Delete a book",
         "tags": ["Books"],
@@ -845,7 +764,7 @@
         }
       }
     },
-    "/books/deleteAll": {
+    "/book/deleteAll": {
       "delete": {
         "summary": "Delete all books",
         "tags": ["Books"],
@@ -856,6 +775,7 @@
         }
       }
     }
+    
   },
   "definitions": {
     "SignupRequest": {
@@ -949,14 +869,26 @@
         }
       }
     },
-    "Student":{
-      "type":"object",
-      "properties":{
-        "stud_id":{ "type":"string", "example": "EFOTEC1213"},
-        "stud_name":{ "type":"string", "example":"Murindwa Phanuel" },
-        "stud_class":{ "type":"string", "example":"S1A, S1B, ... S6D"}
-      }
+    "Student": {
+      "type": "object",
+      "properties": {
+        "stud_id": { "type": "string", "example": "S001" },
+        "stud_name": { "type": "string", "example": "Alice Johnson" },
+        "stud_class": { "type": "string", "example": "S1A" }
+      },
+      "required": ["stud_id", "stud_name", "stud_class"]
     },
+    "StudentArray": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Student" }
+    },
+    "StudentIDList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "example": "S001"
+      }
+    },  
     "Book": {
       "type": "object",
       "properties": {

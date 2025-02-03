@@ -221,7 +221,8 @@ export async function deleteAllStudents(req, res) {
     }
 
     res.status(200).json({
-      message: 'All students deleted successfully',
+      message: `${result.deletedCount} students deleted successfully`,
+      result
     });
   } catch (err) {
     console.error(err);

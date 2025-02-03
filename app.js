@@ -23,10 +23,12 @@ import authRoutes from './routers/authRouter.js'
 import { studentRoutes } from './routers/studentRouter.js'
 import { router as bookRoutes } from './routers/bookRouter.js'
 import assert from 'joi'
+import { transactionRouter } from "./routers/transactionRouter.js";
 
 app.use('/auth', authRoutes)
 app.use('/book', bookRoutes)
 app.use('/student', studentRoutes)
+app.use('/transaction', transactionRouter)
 
 
 // Gracefully shut down the server on SIGINT signal (ctrl+c)

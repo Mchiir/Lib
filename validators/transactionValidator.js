@@ -1,39 +1,35 @@
 import Joi from "joi"
 
-const transactionSchemaValidator = Joi.object({
-  stud_id: Joi.string()
-    .alphanum()
-    .min(3)
-    .max(30)
-    .required(),
+const transactionSchema = Joi.object().keys({
+    stud_id: Joi.string()
+      .custom((value, helpers) => {
+        return mongoose.Types.ObjectId.isValid(value)
+          ? value
+          : helpers.message("Invalid Student ID");
+      })
+      .required(),
+    
+    book_id: Joi.string()
+      .custom((value, helpers) => {
+        return mongoose.Types.ObjectId.isValid(value)
+          ? value
+          : helpers.message("Invalid Book ID");
+      })
+      .required(),
 
-  stud_name: Joi.string()
-    .min(3)
-    .max(100)
-    .required(),
+    borrow_date: Joi.date().iso().default(() => new Date()),
 
-  stud_class: Joi.string()
-    .min(3)
-    .max(30)
-    .required(),
+    return_date: Joi.date().iso().allow(null),
 
-  book_name: Joi.string()
-    .min(5)
-    .max(200)
-    .required(),
+    status: Joi.string().valid('borrowed', 'returned').default('borrowed'),
 
-  borrowing_date: Joi.date()
-    .iso()
-    .when('status', { is: 'borrowed', then: Joi.required() }),
-
-  return_date: Joi.date()
-    .iso()
-    .when('status', { is: 'returned', then: Joi.required() }),
-
-  status: Joi.string()
-    .valid('borrowed', 'returned')
-    .required()
+    history: Joi.array().items(
+      Joi.object({
+        action: Joi.string().valid('borrowed', 'returned').required(),
+        date: Joi.date().iso().default(() => new Date()),
+      })
+    )
 });
 
 
-export default transactionSchemaValidator
+export default transactionSchema

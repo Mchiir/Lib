@@ -34,6 +34,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "dependencies": {
+    "debug": "^4.4.0",
     "express-rate-limit": "^7.5.0",
     "joi": "^17.13.3",
     "lodash": "^4.17.21"

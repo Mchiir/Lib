@@ -75,7 +75,7 @@ export const login = async (req, res) => {
 
     const { username, password } = value
 
-    const user = await signupUser.findOne({ username });
+    const user = await signupUser.findOne({ username }); // username must be unique
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid username or password' });
@@ -96,7 +96,7 @@ export const login = async (req, res) => {
 
     const newLoggedInUser = new loginUser({
       username,
-      password
+      password: user.password // log encrypted password
     })
 
     await newLoggedInUser.save()
@@ -149,8 +149,8 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    console.log(req.user);
-    const userId = req.user.userId || 10;
+    // console.log(req.user);
+    const userId = req.user.userId;
 
     const user = await signupUser.findById(userId);
     if (!user) {

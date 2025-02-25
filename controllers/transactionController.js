@@ -6,7 +6,7 @@ import mongoose from 'mongoose'
 
 
 export const borrowBook = async (req, res) => {
-    console.log('accessed transaction API')
+    // console.log('accessed transaction API')
   const { error } = transactionSchema.validate(req.body)
   
   if (error) return res.status(400).json({ 

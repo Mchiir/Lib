@@ -1,6 +1,7 @@
 import "dotenv/config"
 import { serve, setup } from 'swagger-ui-express'
 import express, { json } from 'express'
+import debug from 'debug'
 // import assert from 'joi'
 
 // Security modules
@@ -47,7 +48,7 @@ app.use('/transaction', transactionRouter)
 
 // Gracefully shut down the server on SIGINT signal (ctrl+c)
 process.on('SIGINT', async () => {
-  console.log('Received SIGINT. Closing MongoDB connection...\nServer stopped successfully.');
+  // console.log('Received SIGINT. Closing MongoDB connection...\nServer stopped successfully.');
   await disconnectDB(); // Disconnect from MongoDB gracefully
   process.exit(0); // Exit the process gracefully
 });
@@ -56,7 +57,10 @@ process.on('SIGINT', async () => {
 const PORT = process.env.PORT || 5000
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`)
-  })
-})
+  app.listen(PORT
+    , () => {
+      if(app.get('env' == 'development')){
+        console.log(`Server running on http://localhost:${PORT}`)
+      }
+    }
+  )})

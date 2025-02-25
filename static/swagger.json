@@ -776,7 +776,7 @@
       }
     },
 
-    "/borrowBook": {
+    "/transaction/borrowBook": {
       "post": {
         "summary": "Borrow a book",
         "tags": ["Transactions"],
@@ -797,7 +797,7 @@
         }
       }
     },
-    "/returnBook": {
+    "/transaction/returnBook": {
       "put": {
         "summary": "Return a borrowed book",
         "tags": ["Transactions"],
@@ -818,7 +818,7 @@
         }
       }
     },
-    "/getAllTransactions": {
+    "/transaction/getAllTransactions": {
       "get": {
         "summary": "Retrieve all transactions",
         "tags": ["Transactions"],
@@ -834,7 +834,7 @@
         }
       }
     },
-    "/findTransaction": {
+    "/transaction/findTransaction": {
       "get": {
         "summary": "Find a transaction",
         "tags": ["Transactions"],
@@ -856,7 +856,7 @@
         }
       }
     },
-    "/updateTransaction/{transaction_id}": {
+    "/transaction/updateTransaction/{transaction_id}": {
       "put": {
         "summary": "Update a transaction",
         "tags": ["Transactions"],
@@ -883,7 +883,7 @@
         }
       }
     },
-    "/deleteTransaction/{transaction_id}": {
+    "/transaction/deleteTransaction/{transaction_id}": {
       "delete": {
         "summary": "Delete a transaction",
         "tags": ["Transactions"],

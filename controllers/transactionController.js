@@ -208,7 +208,7 @@ export const deleteTransaction = async (req, res) =>{
       const { transaction_id } = req.params;
 
       // Validate transaction_id as a valid ObjectId
-      if (!Mongoose.Types.ObjectId.isValid(transaction_id)) {
+      if (!mongoose.Types.ObjectId.isValid(transaction_id)) {
         return res.status(400).json({ error: 'Invalid transaction ID' });
       }
 

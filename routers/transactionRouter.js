@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { verifyToken } from "../middlewares/authMiddleware.js";
 import { 
     borrowBook, 
     returnBook, 
@@ -9,6 +10,7 @@ import {
     } from "../controllers/transactionController.js";
 
 const router = Router()
+router.use(verifyToken)
 
 router.post('/borrowBook', borrowBook)
 router.get('/findTransaction', getTransaction)

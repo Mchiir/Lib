@@ -1,4 +1,5 @@
 import Joi from "joi"
+import mongoose from "mongoose";
 
 const transactionSchema = Joi.object().keys({
     stud_id: Joi.string()

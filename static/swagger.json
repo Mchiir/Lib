@@ -846,7 +846,7 @@
         "tags": ["Transactions"],
         "security": [{ "Bearer": [] }],
         "parameters": [
-          { "name": "transaction_id", "in": "query", "type": "string", "description": "Transaction ID (if searching by ID)" },
+          { "name": "_id", "in": "query", "type": "string", "description": "Transaction ID (if searching by ID)" },
           { "name": "stud_id", "in": "query", "type": "string", "description": "Student ID (optional)" },
           { "name": "book_id", "in": "query", "type": "string", "description": "Book ID (optional)" },
           { "name": "borrow_date", "in": "query", "type": "string", "format": "date-time", "example": "2024-02-01T10:00:00Z" },

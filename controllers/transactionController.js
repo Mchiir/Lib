@@ -96,14 +96,14 @@ export const getTransaction = async (req, res) => {
     }
 
     // Extract query parameters
-    const { transaction_id, stud_id, book_id, borrow_date, return_date, status } = req.query;
+    const { _id, stud_id, book_id, borrow_date, return_date, status } = req.query;
 
     let query = {};
 
     // Validate transaction_id
-    if (transaction_id && transaction_id.trim().length === 24) {
-      query.transaction_id = transaction_id;
-    } else if (transaction_id) {
+    if (_id && _id.trim().length === 24) {
+      query._id = _id;
+    } else if (_id) {
       return res.status(400).json({ message: 'Transaction ID must be a valid string.' });
     }
 

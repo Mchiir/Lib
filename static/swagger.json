@@ -774,8 +774,134 @@
           "404": { "$ref": "#/definitions/ErrorResponse" }
         }
       }
+    },
+
+    "/borrowBook": {
+      "post": {
+        "summary": "Borrow a book",
+        "tags": ["Transactions"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Transaction"
+            }
+          }
+        ],
+        "responses": {
+          "201": { "description": "Book borrowed successfully" },
+          "400": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/returnBook": {
+      "put": {
+        "summary": "Return a borrowed book",
+        "tags": ["Transactions"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Transaction"
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Book returned successfully" },
+          "400": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/getAllTransactions": {
+      "get": {
+        "summary": "Retrieve all transactions",
+        "tags": ["Transactions"],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "List of transactions",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Transaction" }
+            }
+          }
+        }
+      }
+    },
+    "/findTransaction": {
+      "get": {
+        "summary": "Find a transaction",
+        "tags": ["Transactions"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "stud_id",
+            "in": "query",
+            "type": "string",
+            "description": "Student ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction details",
+            "schema": { "$ref": "#/definitions/Transaction" }
+          },
+          "404": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/updateTransaction/{transaction_id}": {
+      "put": {
+        "summary": "Update a transaction",
+        "tags": ["Transactions"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Transaction"
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Transaction updated successfully" },
+          "400": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
+    },
+    "/deleteTransaction/{transaction_id}": {
+      "delete": {
+        "summary": "Delete a transaction",
+        "tags": ["Transactions"],
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Transaction deleted successfully" },
+          "400": { "$ref": "#/definitions/ErrorResponse" }
+        }
+      }
     }
-    
   },
   "definitions": {
     "SignupRequest": {
@@ -902,6 +1028,54 @@
         "level": { "type": "string", "example": "S1" },
         "isAvailable": { "type": "boolean", "example": true }
       }
+    },
+    "Transaction": {
+      "type": "object",
+      "properties": {
+        "stud_id": {
+          "type": "string",
+          "example": "65a3b4c2d9f40e1234567890"
+        },
+        "book_id": {
+          "type": "string",
+          "example": "65a3b4c2d9f40e1234567891"
+        },
+        "borrow_date": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2024-02-01T10:00:00Z"
+        },
+        "return_date": {
+          "type": "string",
+          "format": "date-time",
+          "example": "2024-02-15T10:00:00Z",
+          "nullable": true
+        },
+        "status": {
+          "type": "string",
+          "enum": ["borrowed", "returned"],
+          "example": "borrowed"
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": ["borrowed", "returned"],
+                "example": "borrowed"
+              },
+              "date": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2024-02-01T10:00:00Z"
+              }
+            }
+          }
+        }
+      },
+      "required": ["stud_id", "book_id", "status"]
     },
     "ErrorResponse": {
       "type": "object",

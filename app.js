@@ -1,7 +1,6 @@
 import "dotenv/config"
 import { serve, setup } from 'swagger-ui-express'
 import express, { json } from 'express'
-import debug from 'debug'
 // import assert from 'joi'
 
 // Security modules
@@ -16,10 +15,10 @@ const swaggerDocument = createRequire(import.meta.url)("./static/swagger.json");
 import { connectDB, disconnectDB } from './config/db.js' // Import connect and disconnect
 
 // routers
-import authRoutes from './routers/authRouter.js'
-import { studentRoutes } from './routers/studentRouter.js'
-import { router as bookRoutes } from './routers/bookRouter.js'
-import { transactionRouter } from "./routers/transactionRouter.js";
+import authRoutes from './routes/authRouter.js'
+import { studentRoutes } from './routes/studentRouter.js'
+import { router as bookRoutes } from './routes/bookRouter.js'
+import { transactionRouter } from "./routes/transactionRouter.js";
 
 
 const app = express()
@@ -51,7 +50,7 @@ process.on('SIGINT', async () => {
   // console.log('Received SIGINT. Closing MongoDB connection...\nServer stopped successfully.');
   await disconnectDB(); // Disconnect from MongoDB gracefully
   process.exit(0); // Exit the process gracefully
-});
+})
 
 // Server Port
 const PORT = process.env.PORT || 5000
@@ -59,7 +58,7 @@ const PORT = process.env.PORT || 5000
 connectDB().then(() => {
   app.listen(PORT
     , () => {
-      if(app.get('env' == 'development')){
+      if(process.env.NODE_ENV !== 'production'){
         console.log(`Server running on http://localhost:${PORT}`)
       }
     }

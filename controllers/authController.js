@@ -145,12 +145,16 @@ export const updateUser = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: 'Error updating user', error: err.message });
   }
-};
+}
 
 export const deleteUser = async (req, res) => {
   try {
     // console.log(req.user);
-    const userId = req.user.userId;
+    const userId = req.user.userId
+    const userRole = req.user.role
+    if(userRole != "ADMIN"){
+      res.status(401).json({ message:"You're not eligible for this role." })
+    }
 
     const user = await signupUser.findById(userId);
     if (!user) {
@@ -159,6 +163,7 @@ export const deleteUser = async (req, res) => {
 
     // Delete the user
     await signupUser.findByIdAndDelete(userId);
+    await loginUser.findOneAndDelete({username: user.username})
 
     res.status(200).json({
       message: 'User deleted successfully'
@@ -167,7 +172,7 @@ export const deleteUser = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: 'Error deleting user', error: err.message });
   }
-};
+}
 
 export const getUser = async (req, res) => {
   try {
@@ -201,6 +206,7 @@ export const getAllUsers = async (req, res) => {
     // console.log(req.user)
     // Find all users in the database
     const users = await signupUser.find();
+
 
     // checking for eligibility of accessing data.
     if(req.user.role != "ADMIN"){

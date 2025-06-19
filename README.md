@@ -1,6 +1,6 @@
 # Hello Efotec Library dev team
 
-##You can access the deployed backend service at the following link:
+## You can access the deployed backend service at the following (Ctrl-click the link) link:
 
 ### [Backend Service on Render](https://lib-backend-j3x3.onrender.com)
 ### [Swagger Documentation](https://lib-backend-j3x3.onrender.com/api-docs)
